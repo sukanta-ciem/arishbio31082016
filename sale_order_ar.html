@@ -1,0 +1,692 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<title>Arish Bio Naturals</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <link media="all" href="http://fonts.googleapis.com/css?family=Archivo+Narrow" type="text/css" rel="stylesheet" />
+        <link rel="stylesheet" href="css/global.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="css/my_menu.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="css/res.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="css/jquery.mCustomScrollbar.css" />
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/css-menu.js"></script>
+<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+<!-- Add fancyBox main JS and CSS files -->
+<script type="text/javascript" src="source/jquery.fancybox.js?v=2.1.5"></script>
+<link rel="stylesheet" type="text/css" href="source/jquery.fancybox.css?v=2.1.5" media="screen" />
+</head>
+<body class="index_body_bg">
+<div class="body_bg">
+<div class="menu_header">    
+	<div class="menu-inner">
+        <div id="wrapper">
+        	<div class="header_btn_frame">
+
+                    <div class="header_btn_area">
+                        <a href="log_out.html"><span>Log Out</span></a>
+                        <div class="clear"></div>
+                        <span></span>
+                        <div class="clear"></div>                        
+                        <a href="sale_order_ar.html"><span >Home</span></a>
+                        <div class="clear"></div>                        
+                        <a href="order_view_all.html"><span >View Order</span></a>
+                    </div>
+            </div>
+            <div class="brand">
+                <a class="nav-link" href="sale_order_ar.php">
+                    <img title="logo" alt="logo" src="images/logo_n.png">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="line_shadow"></div>
+<div class="clear"></div>
+<div class="hed_top"></div>
+<div class="clear"></div>
+<div class="clear"></div>
+<link rel="stylesheet" type="text/css" href="css/ddlevelsmenu-base.css" />
+<link rel="stylesheet" type="text/css" href="css/ddlevelsmenu-topbar.css" />
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<script type="text/javascript" src="js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="js/ddlevelsmenu.js"></script>
+<script type="text/javascript" src="autocomplete/jquery.min.js"></script>
+<script type="text/javascript">
+function changeDistributorName()
+{
+	$("#qty_id").val('');
+	$("#distributor_id").val('');
+	$("#special_distributor").val('');
+}
+
+
+function fetch_disdata(distributor_name)
+{
+	//alert(prod_name);
+	var n = distributor_name.indexOf("#");
+	if(n!=-1)
+	{
+	var res = distributor_name.split("#");
+	var distributor_id = res[1];
+	//alert(product_id);
+	$.ajax({
+		type: 'post',
+		url: 'fetch_distributor_all_info.php',
+		data: 'distributor_id='+distributor_id,
+		success: function(msg)
+		{
+							var data = JSON.parse(msg);
+							console.log(data);
+							if(data[0]=='Yes')
+							{
+								var special_distributor = data[1];
+								$("#special_distributor").val(special_distributor);
+								
+								var distributor_id = data[2];
+								$("#distributor_id").val(distributor_id);
+								
+								var email = data[3];
+								$("#email").val(email);
+								
+								var contact_no = data[4];
+								$("#contact_no").val(contact_no);
+							}
+							else
+							{
+								alert("Invalid Distributor Name!");
+							}
+		}
+	});
+	}
+}
+
+function fetch_data(prod_name)
+{
+	var n = prod_name.indexOf("#");
+	if(n!=-1)
+	{
+	var res = prod_name.split("#");
+	var product_id = res[1];
+	$.ajax({
+		type: 'post',
+		url: 'fetch_product_all_info.php',
+		data: 'product_id='+product_id,
+		success: function(msg)
+		{
+							var data = JSON.parse(msg);
+							console.log(data);
+							if(data[0]=='Yes')
+							{
+								var qty_id = data[1];
+								$("#qty_id").html(qty_id);
+								
+								var product_mf_id = data[2];
+								$("#product_mf_id").val(product_mf_id);
+							}
+							else
+							{
+								alert("Invalid Product Name!");
+							}
+		}
+	});
+	}
+}
+
+function resetWight(weightId)
+{
+	var special_distributor = $("#special_distributor").val();
+	var distributor_id = $("#distributor_id").val();
+	var distributor_name = $("#distributor_name").val();
+	if((special_distributor=='')||(distributor_id=='')||(distributor_name==''))
+	{
+		alert("Enter a valid Distributor Name first!");
+		$("#qty_id").val('');
+	}
+	else
+	{
+		if(special_distributor=='Y')
+		{
+			if(weightId=='')
+			{
+				alert("Select Product Weight!");
+			}
+			else
+			{
+				$.ajax({
+					type: 'POST',
+					url: "fetch_exist_product_weight_sp_all.php",
+					data: 'weightId='+weightId,
+					success: function(msg)
+					{
+						var data = JSON.parse(msg);
+						console.log(data);
+						if(data[0]=='Yes')
+						{
+							var sku = data[1];
+							$("#sku").val(sku);
+							
+							var mrp = data[2];
+							$("#mrp").val(mrp);
+							
+							var base_purchase_price = data[3];
+							$("#base_purchase_price").val(base_purchase_price);
+							
+							var distributor_unit_price = data[4];
+							$("#distributor_unit_price").val(distributor_unit_price);
+							
+							
+							var vat_percentage_inp = data[5];
+							$("#vat_percentage_inp").val(vat_percentage_inp);
+							
+							var vat_amnt_inp = data[6];
+							$("#vat_amnt_inp").val(vat_amnt_inp);
+							
+							var cst_percentage_inp = data[7];
+							$("#cst_percentage_inp").val(cst_percentage_inp);
+							
+							var cst_amnt_inp = data[8];
+							$("#cst_amnt_inp").val(cst_amnt_inp);
+							
+							
+							var exise_state_percentage_inp = data[9];
+							$("#exise_state_percentage_inp").val(exise_state_percentage_inp);
+							
+							var exise_state_amnt_inp = data[10];
+							$("#exise_state_amnt_inp").val(exise_state_amnt_inp);
+							
+							var exise_central_percentage_inp = data[11];
+							$("#exise_central_percentage_inp").val(exise_central_percentage_inp);
+							
+							var exise_central_amnt_inp = data[12];
+							$("#exise_central_amnt_inp").val(exise_central_amnt_inp);
+							
+							var distributor_price = data[13];
+							$("#distributor_price").val(distributor_price);
+							
+							var ean_no = data[14];
+							$("#ean_no").val(ean_no);
+										
+						}
+						else
+						{
+							alert("Invalid Product Weight!");
+						}
+					}
+				});
+			}
+		}
+		else
+		{
+			if(weightId=='')
+			{
+				alert("Select Product Weight!");
+			}
+			else
+			{
+				$.ajax({
+					type: 'POST',
+					url: "fetch_exist_product_weight_all.php",
+					data: 'weightId='+weightId,
+					success: function(msg)
+					{
+						var data = JSON.parse(msg);
+						console.log(data);
+						if(data[0]=='Yes')
+						{
+							var sku = data[1];
+							$("#sku").val(sku);
+							
+							var mrp = data[2];
+							$("#mrp").val(mrp);
+							
+							var base_purchase_price = data[3];
+							$("#base_purchase_price").val(base_purchase_price);
+							
+							var distributor_unit_price = data[4];
+							$("#distributor_unit_price").val(distributor_unit_price);
+							
+							
+							var vat_percentage_inp = data[5];
+							$("#vat_percentage_inp").val(vat_percentage_inp);
+							
+							var vat_amnt_inp = data[6];
+							$("#vat_amnt_inp").val(vat_amnt_inp);
+							
+							var cst_percentage_inp = data[7];
+							$("#cst_percentage_inp").val(cst_percentage_inp);
+							
+							var cst_amnt_inp = data[8];
+							$("#cst_amnt_inp").val(cst_amnt_inp);
+							
+							
+							var exise_state_percentage_inp = data[9];
+							$("#exise_state_percentage_inp").val(exise_state_percentage_inp);
+							
+							var exise_state_amnt_inp = data[10];
+							$("#exise_state_amnt_inp").val(exise_state_amnt_inp);
+							
+							var exise_central_percentage_inp = data[11];
+							$("#exise_central_percentage_inp").val(exise_central_percentage_inp);
+							
+							var exise_central_amnt_inp = data[12];
+							$("#exise_central_amnt_inp").val(exise_central_amnt_inp);
+							
+							var distributor_price = data[13];
+							$("#distributor_price").val(distributor_price);
+							
+							var ean_no = data[14];
+							$("#ean_no").val(ean_no);
+										
+						}
+						else
+						{
+							alert("Invalid Product Weight!");
+						}
+					}
+				});
+			}
+		}
+	}
+}
+</script>
+<script type="text/javascript" src="autocomplete/jquery.min.js"></script>
+<script type="text/javascript" src="autocomplete/jquery-ui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="autocomplete/jquery-ui.css" />
+<script>
+var old_jQuery = jQuery.noConflict(true);
+</script>
+<script type="text/javascript">
+		old_jQuery(document).ready(function(){
+			old_jQuery("#prod_id").autocomplete({
+				source:'getautocomplete_ar.php',
+				minLength:1
+			});
+			old_jQuery("#distributor_name").autocomplete({
+				source:'getautocomplete_distributor.php',
+				minLength:1
+			});
+		});
+</script>
+
+<script type="text/javascript">
+ddlevelsmenu.setup("ddtopmenubar", "topbar") //ddlevelsmenu.setup("mainmenuid", "topbar|sidebar")
+</script>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.css" />
+<script src="js/jquery-1.9.1.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script type="text/javascript">
+	$(function() {
+		$( ".datepicker" ).datepicker();
+		$( ".datepicker" ).change(function() {
+			$( ".datepicker" ).datepicker( "option", "dateFormat", "d-m-yy" );
+			$( ".datepicker" ).datepicker( "option", "showAnim", "blind" );
+		});
+		$( "#datepicker1" ).datepicker();
+		$( "#datepicker1" ).change(function() {
+			$( "#datepicker1" ).datepicker( "option", "dateFormat", "d-m-yy" );
+			$( "#datepicker1" ).datepicker( "option", "showAnim", "blind" );
+		});
+		$( "#datepicker2" ).datepicker();
+		$( "#datepicker2" ).change(function() {
+			$( "#datepicker2" ).datepicker( "option", "dateFormat", "d-m-yy" );
+			$( "#datepicker2" ).datepicker( "option", "showAnim", "blind" );
+		});
+		$( "#datepicker3" ).datepicker();
+		$( "#datepicker3" ).change(function() {
+			$( "#datepicker3" ).datepicker( "option", "dateFormat", "d-m-yy" );
+			$( "#datepicker3" ).datepicker( "option", "showAnim", "blind" );
+		});
+		$( "#datepicker4" ).datepicker();
+		$( "#datepicker4" ).change(function() {
+			$( "#datepicker4" ).datepicker( "option", "dateFormat", "d-m-yy" );
+			$( "#datepicker4" ).datepicker( "option", "showAnim", "blind" );
+		});
+		$( "#datepicker5" ).datepicker();
+		$( "#datepicker5" ).change(function() {
+			$( "#datepicker5" ).datepicker( "option", "dateFormat", "d-m-yy" );
+
+			$( "#datepicker5" ).datepicker( "option", "showAnim", "blind" );
+		});
+		$( "#datepicker6" ).datepicker();
+		$( "#datepicker6" ).change(function() {
+			$( "#datepicker6" ).datepicker( "option", "dateFormat", "d-m-yy" );
+			$( "#datepicker6" ).datepicker( "option", "showAnim", "blind" );
+		});
+		$( "#datepicker6" ).datepicker();
+		$( "#datepicker6" ).change(function() {
+			$( "#datepicker6" ).datepicker( "option", "dateFormat", "d-m-yy" );
+			$( "#datepicker6" ).datepicker( "option", "showAnim", "blind" );
+		});
+		$( "#datepicker7" ).datepicker();
+		$( "#datepicker7" ).change(function() {
+			$( "#datepicker7" ).datepicker( "option", "dateFormat", "d-m-yy" );
+			$( "#datepicker7" ).datepicker( "option", "showAnim", "blind" );
+		});
+		$( "#datepicker8" ).datepicker();
+		$( "#datepicker8" ).change(function() {
+			$( "#datepicker8" ).datepicker( "option", "dateFormat", "d-m-yy" );
+			$( "#datepicker8" ).datepicker( "option", "showAnim", "blind" );
+		});
+	});
+		$( ".datepicker9" ).datepicker();
+		$( ".datepicker9" ).change(function() {
+			$( ".datepicker9" ).datepicker( "option", "dateFormat", "d-m-yy" );
+			$( ".datepicker9" ).datepicker( "option", "showAnim", "blind" );
+		});
+</script>
+<div class="others_content_frame" style="height:auto;">
+    <div id="wrapper">
+    	<div class="others_content">
+        <h2 class="spl_h2">Add Sale Order (A.R)&nbsp;&nbsp;</h2>
+        <div class="others_content_in" style="height:auto;">
+            <form action="" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="orderid" value="" />
+              <table class="distributor_from distributor_from2 sale_ord_arn" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td>
+                  <ul>
+                  <li>
+                  <input type="radio" name="SelectDistributor" id="SelectDistributor2" checked="checked" value="NewRegister" />&nbsp;Registerd Distributor
+                  </li>
+                  <li>
+					  <input type="button" value="New Distributor" onClick="setDistributor();" />
+                    <input type="hidden" name="DistributorId" id="DistributorId" value="" />
+                  </li>
+                  
+                  <li>
+                  <label>Distributor Name </strong><font color="#FF0000">*</font> 
+                  
+                  <input type="text" style="background:none; border: none; color: #ccc; font-size: 0; height: 1px; width: 1px;" name="distributor_id" id="distributor_id" readonly value="" />
+                  <input type="text" style="background:none; border: none; color: #ccc; font-size: 0; height: 1px; width: 1px;" name="special_distributor" id="special_distributor" readonly value="" />
+                  
+                  </label>
+                  <input type="text" class="drop_down editable_area" name="distributor_name" id="distributor_name" value="" onkeyup="fetch_disdata(this.value);"  onblur="fetch_disdata(this.value);" onchange="changeDistributorName();" required />
+                  </li>
+                  <li>
+                  <label>Product Name</label>
+                  <input type="text" name="prod_id" class="drop_down editable_area" id="prod_id" onKeyUp="fetch_data(this.value);"  onblur="fetch_data(this.value);" required >
+				  <input name="product_mf_id" style="display:none;" type="text" class="text_field02 wtUpload" id="product_mf_id" />
+                  </li>
+                  <li>
+                  <label>Product Weight</label>
+                  <select name="qty_id" class="drop_down editable_area" id="qty_id" onChange="resetWight(this.value);" required >
+                        <option value="">Select</option>
+                    </select>
+                  </li>
+                  <li>
+                  <label>SKU</label>
+                  <input name="sku" type="text" class="text_field02 wtUpload" id="sku" readonly />
+                  </li>
+                  <li>
+                  <label>Add Product Qty</label>
+                  <input name="product_qty" onChange="addProQty(this.value);" type="text" class="text_field02 wtUpload total_amount_input total_amount_input1 editable_area" id="product_qty" required />
+                  </li>
+                  <li>
+                  <label>Free Qty</label>
+                  <input name="free_qty" type="text" value="0" class="text_field02 wtUpload editable_area" id="free_qty" required />
+                  </li>
+                  
+                  
+                  <li style="text-align: right; width: 98%; padding-top: 10px;">
+                  <input style="float:initial; padding: 5px 4px;" name="list" type="submit" value="Add In List" class="distributor_from_btn" id="button" />
+                  <input style="float:initial;padding: 5px 4px;" name="add_order" type="submit" value="Add Sale Order" class="distributor_from_btn" id="button" />
+                  </li>
+                  </ul>
+                  </td>
+                </tr>
+              </table>
+              <table class="distributor_from sale_ord_arn" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td>
+                  <ul>
+                  <li>
+                  <label>E-mail <font color="#FF0000">*</font></label>
+                  <input type="text" class="text_field02" name="email" id="email" readonly value="" />
+                  </li>
+                  <li>
+                  <label>Contact No <font color="#FF0000">*</font></label>
+                  <input type="text" class="text_field02" name="contact_no" id="contact_no" readonly value="" />
+                  </li>
+                  <li>
+                  <label>Order No </label>
+                  <input name="order_no" type="text" class="text_field01" id="order_no" value="" readonly />
+                  <input style="display:none;" name="order_no_invalid_process" type="text" value="" required />
+                  </li>
+                  <li>
+                  <label>Delivery date</label>
+				  <input name="deliveryDate" type="text" class="text_field01 editable_area" id="datepicker1" value="" readonly />
+                  </li>
+                  <li>
+                  <label>Work Order No</label>
+				  <input name="work_order_no" type="text" class="text_field01 editable_area" id="work_order_no" value="" />
+                  </li>
+                  <li>
+                  <label>MRP</label>
+                  <input name="mrp" type="text" class="text_field02 wtUpload" id="mrp" readonly />
+                  </li>
+                  <li>
+                  <label>Base Purchase Price</label>
+                  <input name="base_purchase_price" type="text" class="text_field02 wtUpload" id="base_purchase_price" readonly />
+                  </li>
+                  <li>
+                  <label>Distributor Price without tax</label>
+                  <input name="distributor_unit_price" type="text" class="text_field02 wtUpload total_amount_input total_amount_input2" id="distributor_unit_price" readonly />
+                  </li> 
+                  <li>
+                  <label>Vat %</label>
+                  <input name="vat_percentage_inp" type="text" class="text_field01" id="vat_percentage_inp" readonly />
+                  </li>
+                  <li>
+                  <label>Vat Amnount</label>
+                  <input name="vat_amnt_inp" type="text" class="text_field02 text_field01" id="vat_amnt_inp" readonly />
+                  </li>
+                  <li>
+                  <label>Cst Tax %</label>
+                  <input name="cst_percentage_inp" type="text" class="text_field01" id="cst_percentage_inp" readonly />       
+                  </li>
+                  <li>
+                  <label>Cst Amnount</label>
+                  <input name="cst_amnt_inp" type="text" class="text_field02 text_field01" id="cst_amnt_inp" readonly />
+                  </li>
+                  <li>
+                  <label>Exise State Tax %</label>
+                  <input name="exise_state_percentage_inp" type="text" class="text_field01" id="exise_state_percentage_inp" readonly />
+                  </li>
+                  <li>
+                  <label>Exise State Amnount</label>
+                  <input name="exise_state_amnt_inp" type="text" class="text_field02 text_field01" id="exise_state_amnt_inp" readonly />
+                  </li>
+                  <li>
+                  <label>Exise Central  Tax %</label>
+                  <input name="exise_central_percentage_inp" type="text" class="text_field01" id="exise_central_percentage_inp" readonly />
+                  </li>
+                  <li>
+                  <label>Exise Central Amnount</label>
+                  <input name="exise_central_amnt_inp" type="text" class="text_field02 text_field01" id="exise_central_amnt_inp" readonly />
+                  </li>
+                  <li>
+                  <label>Distributor Price with tax</label>
+                  <input name="distributor_price" id="distributor_price" type="text" class="text_field02 wtUpload total_amount_input total_amount_input2" readonly />
+                  </li>
+                  <li>
+                  <label>EAN No</label>
+                  <input name="ean_no" type="text" class="text_field01" id="ean_no" readonly />
+                  </li>
+                  </ul>
+                  </td>
+                </tr>
+              </table>
+<script type="text/javascript">
+function addProQty(product_qty)
+{
+	
+	var regex=/^[0-9]+$/;
+	if((product_qty=='')||(product_qty=='0'))
+	{
+		alert("Enter Product Qty!");
+		$("#product_qty").val('');
+	}
+	else if(!product_qty.match(regex))
+	{
+		alert("Must input numbers");
+		$("#product_qty").val('');
+	}
+}
+function calCustPrice(distributor_price)
+{
+	
+	var regex=/^[0-9.]+$/;
+
+	if(distributor_price=='')
+	{
+		alert("Enter Distributor Price!");
+		return false;
+	}
+	else if(!distributor_price.match(regex))
+	{
+		alert("Must input numbers or dot");
+		$("#distributor_price").val('');
+	}
+	var vat_percentage_inp = $("#vat_percentage_inp").val()
+	if(vat_percentage_inp=='')
+	{
+		alert("Select Vat %!");
+		return false;
+	}
+	
+	var cst_percentage_inp = $("#cst_percentage_inp").val()
+	if(cst_percentage_inp=='')
+	{
+		alert("Select Cst Tax %!");
+		return false;
+	}
+	
+	var exise_state_percentage_inp = $("#exise_state_percentage_inp").val()
+	if(exise_state_percentage_inp=='')
+	{
+		alert("Select Exise State Tax %!");
+		return false;
+	}
+	
+	var exise_central_percentage_inp = $("#exise_central_percentage_inp").val()
+	if(exise_central_percentage_inp=='')
+	{
+		alert("Select Exise Central Tax %!");
+		return false;
+	}
+	
+	var distributor_price = $("#distributor_price").val();
+	if(distributor_price=='')
+	{
+		alert("Enter Distributor Price!");
+		return false;
+	}
+	
+	//alert(vendorType);
+	$.ajax({
+		type:'post',
+		url:"ajax_sort_all_tax.php",
+		data: 'vat_percentage_inp='+vat_percentage_inp+'&cst_percentage_inp='+cst_percentage_inp+'&exise_state_percentage_inp='+exise_state_percentage_inp+'&exise_central_percentage_inp='+exise_central_percentage_inp+'&distributor_price='+distributor_price,
+		//data: 'vat_percentage_inp='+vat_percentage_inp+'&distributor_price='+distributor_price,
+		success: function(msg)
+		{
+			//alert();
+			if(msg!='error')
+			{
+				var res = msg.split("_");
+				$("#distributor_unit_price").val(Math.round(res[0] * 100) / 100);
+				$("#vat_amnt_inp").val(Math.round(res[1] * 100) / 100);
+				$("#cst_amnt_inp").val(Math.round(res[2] * 100) / 100);
+				$("#exise_state_amnt_inp").val(Math.round(res[3] * 100) / 100);
+				$("#exise_central_amnt_inp").val(Math.round(res[4] * 100) / 100);
+				//$("#vat_percentage_inp").val(res[2]);
+			}
+		}
+	});
+}
+</script>
+            <div class="clear"></div>
+            <table class="sale_ar_view" width="100%" border="0"  cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td align="center" class="bg05"><strong>Product</strong></td>
+                      <td align="center" class="bg05"><strong>Distributor Price</strong></td>
+                      <td align="center" class="bg05"><strong>Qty</strong></td>
+                      <td align="center" class="bg05"><strong>Free Qty</strong></td>
+                    </tr>
+					
+					<tr>
+                      <td align="center" class="bg06"></td>
+                      <td align="center" class="bg06"></td>
+                      <td align="center" class="bg06"></td>
+                      <td align="center" class="bg06"></td>
+                    </tr>
+                    
+        	</table>
+            </form>
+            <div class="clear"></div>
+        </div>
+        </div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="footer_frame">
+    <div class="footer">
+        <div class="clear"></div>
+        <div class="footer_ext">
+            <div class="footer_ext_in">
+                <div id="wrapper">
+                    <div class="footer_bottom">
+                        <div class="copyright">		
+                            <p>Developed by: <a href="http://acsindia.in" target="_blank">ACS</a></p>                
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<body>
+</body>
+</html>
+<script type="text/javascript" src="lib/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="source/jquery.fancybox.js?v=2.1.5"></script>
+<link rel="stylesheet" type="text/css" href="source/jquery.fancybox.css?v=2.1.5" media="screen" />
+<script type="text/javascript">
+var _xyz = jQuery.noConflict();
+jQuery( document ).ready(function( $ ) {
+  // Code that uses jQuery's $ can follow here.
+  $(document).ready(function() {
+		_xyz('.fancybox').fancybox({
+			width: '850',
+			fitToView: true,
+			type: 'iframe'
+		});
+	});
+});
+
+function setDistributor()
+{
+	var SelectDistributor = $('input:radio[name=SelectDistributor]:checked').val();
+	if(SelectDistributor=='Registered')
+	{
+		_xyz.fancybox.open({
+			width: '850',
+			fitToView: true,
+			href:'view_distributor.php',
+			type: 'iframe'
+		});
+	}
+	else
+	{
+		_xyz.fancybox.open({
+			width: '850',
+			fitToView: true,
+			href:'create_distributor.html',
+			type: 'iframe'
+		});
+
+	}
+}
+</script>
